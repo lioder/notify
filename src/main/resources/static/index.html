@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Notify</title>
+</head>
+<body>
+    <input id="input" type="text">
+    <button onclick="send()">发送</button>
+    <script>
+        let websocket = null;
+
+        if ('WebSocket' in window) {
+            websocket = new WebSocket('ws://localhost:8080/websocket');
+        } else {
+            alert('Notify无法工作在您的浏览器上');
+        }
+
+        websocket.onerror = function () {
+            console.log('websocket error');
+        };
+
+        websocket.onopen = function (event) {
+            console.log('websocket open')
+        }
+
+        websocket.onmessage = function (event) {
+            console.log(event.data)
+        }
+
+        websocket.onclose = function () {
+            console.log('websocket close')
+        }
+
+        window.onbeforeunload = function(){
+            websocket.close();
+        }
+
+        function send() {
+            let message = document.getElementById('input').value;
+            websocket.send(message);
+        }
+    </script>
+</body>
+</html>
